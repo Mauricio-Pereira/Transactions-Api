@@ -53,8 +53,8 @@ jobs:
 
       # Build da imagem Docker
       - name: Build Docker Image
-        run: docker build -t fastcash-api:latest .
+        run: docker build -t Transactions-api:latest .
 
       # Publicar a imagem no Docker Hub
       - name: Push Docker Image
-        run: docker tag fastcash-api:latest ${{ secrets.DOCKER_USERNAME }}/fastcash-api:latest && docker push ${{ secrets.DOCKER_USERNAME }}/fastcash-api:latest
+        run: docker tag Transactions-api:latest ${{ secrets.DOCKER_USERNAME }}/Transactions-api:latest && docker push ${{ secrets.DOCKER_USERNAME }}/Transactions-api:latest

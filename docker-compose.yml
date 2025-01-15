@@ -1,7 +1,7 @@
 ﻿version: '3.8'
 
 services:
-  fastcash-api:
+  transactions-api:
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,9 +17,9 @@ services:
       - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: C@verinha.p4
-      MYSQL_DATABASE: fastcashapitest
-      MYSQL_USER: fastcash
-      MYSQL_PASSWORD: fastcash
+      MYSQL_DATABASE: transactionsapi
+      MYSQL_USER: transactions
+      MYSQL_PASSWORD: transactions
     volumes:
       - mysql_data:/var/lib/mysql
         
