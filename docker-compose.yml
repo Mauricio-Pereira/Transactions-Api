@@ -1,0 +1,36 @@
+﻿version: '3.8'
+
+services:
+  fastcash-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80" # Mapear a porta 5000 do host para a 80 do container
+    depends_on:
+      - mysql-db
+
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: C@verinha.p4
+      MYSQL_DATABASE: fastcashapitest
+      MYSQL_USER: fastcash
+      MYSQL_PASSWORD: fastcash
+    volumes:
+      - mysql_data:/var/lib/mysql
+        
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6380:63879" # Porta do Redis
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mysql_data:
+  redis_data:
