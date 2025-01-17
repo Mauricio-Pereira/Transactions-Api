@@ -2,7 +2,6 @@
 using Transactions_Api.Application.DTOs;
 using Transactions_Api.Application.Services;
 using Transactions_Api.Infrastructure.Infrastructure.Caching;
-using Transactions_Api.Shared.Utils;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

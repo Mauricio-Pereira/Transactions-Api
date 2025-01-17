@@ -27,23 +27,35 @@ public class DeleteTransactionHandler : IRequestHandler<DeleteTransactionCommand
 
     public async Task<TransacaoResponseDTO> Handle(DeleteTransactionCommand request, CancellationToken cancellationToken)
     {
-        var transacaoToDelete = await _transacaoService.GetByTxidAsync(request.Txid);
-        if (transacaoToDelete == null)
+        _logger.LogInformation($"Iniciando a exclusão da transação com Txid: {request.Txid}");
+
+        // Obter transação
+        var transaction = await _transacaoService.GetByTxidAsync(request.Txid);
+        if (transaction == null)
         {
-            throw new NotFoundException("Transação não encontrada");
+            _logger.LogWarning($"Transação com Txid {request.Txid} não encontrada.");
+            throw new NotFoundException("Transação não encontrada.");
         }
 
+        // Excluir transação
         await _transacaoService.DeleteAsync(request.Txid);
 
+        // Remover do cache
+        await RemoveFromCacheAsync(request.Txid);
+
+        _logger.LogInformation($"Transação com Txid {request.Txid} excluída com sucesso.");
+        return transaction;
+    }
+
+    private async Task RemoveFromCacheAsync(string txid)
+    {
         try
         {
-            await _cachingService.RemoveAsync(request.Txid);
+            await _cachingService.RemoveAsync(txid);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"Falha ao tentar remover a transação do cache: {ex.Message}");
+            _logger.LogWarning($"Erro ao remover Txid {txid} do cache: {ex.Message}");
         }
-
-        return transacaoToDelete;
     }
 }

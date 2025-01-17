@@ -3,21 +3,25 @@ using Transactions_Api.Application.Queries;
 using Transactions_Api.Application.Services;
 using Transactions_Api.Infrastructure.Infrastructure.Caching;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Transactions_Api.Application.Handlers;
 
-public class GetAllTransacoesHandler : IRequestHandler<GetAllTransacoesQuery, IEnumerable<TransacaoResourceDTO>>
+public class GetAllTransactionsHandler : IRequestHandler<GetAllTransacoesQuery, IEnumerable<TransacaoResourceDTO>>
 {
     private readonly ITransacaoService _transacaoService;
     private readonly ICachingService _cachingService;
+    private readonly ILogger<GetAllTransactionsHandler> _logger;
 
-    public GetAllTransacoesHandler(
+    public GetAllTransactionsHandler(
         ITransacaoService transacaoService,
-        ICachingService cachingService)
+        ICachingService cachingService,
+        ILogger<GetAllTransactionsHandler> logger)
     {
         _transacaoService = transacaoService;
         _cachingService = cachingService;
+        _logger = logger;
     }
 
     public async Task<IEnumerable<TransacaoResourceDTO>> Handle(
@@ -28,6 +32,7 @@ public class GetAllTransacoesHandler : IRequestHandler<GetAllTransacoesQuery, IE
         var transacoesCache = await _cachingService.GetAsync("transacoes");
         if (!string.IsNullOrEmpty(transacoesCache))
         {
+            _logger.LogInformation("Transações recuperadas do cache.");
             return JsonConvert.DeserializeObject<IEnumerable<TransacaoResourceDTO>>(transacoesCache);
         }
 
@@ -35,6 +40,7 @@ public class GetAllTransacoesHandler : IRequestHandler<GetAllTransacoesQuery, IE
         var transacoes = await _transacaoService.GetAllAsync();
         if (transacoes == null || !transacoes.Any())
         {
+            _logger.LogWarning("Nenhuma transação encontrada no banco de dados.");
             // Retorna lista vazia ou null — o controller decide como tratar
             return Enumerable.Empty<TransacaoResourceDTO>();
         }
@@ -45,10 +51,16 @@ public class GetAllTransacoesHandler : IRequestHandler<GetAllTransacoesQuery, IE
             .ToList(); // for materialization
 
         // 4) Salva no cache
-        await _cachingService.SetAsync("transacoes", 
-            JsonConvert.SerializeObject(transacoesResource));
+        try
+        {
+            await _cachingService.SetAsync("transacoes", JsonConvert.SerializeObject(transacoesResource));
+            _logger.LogInformation("Transações salvas no cache.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning($"Falha ao salvar transações no cache: {ex.Message}");
+        }
 
         return transacoesResource;
     }
-    
 }

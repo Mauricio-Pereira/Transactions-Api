@@ -7,12 +7,14 @@ using Transactions_Api.Infrastructure.Infrastructure.Caching;
 using Transactions_Api.Infrastructure.Repositories;
 using Transactions_Api.Shared.Utils;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Internal;
+using Serilog;
 using Transactions_Api.Controllers;
 using Transactions_Api.Middleware;
 
@@ -77,6 +79,7 @@ builder.Services.AddControllers()
     {
         fv.RegisterValidatorsFromAssemblyContaining<TransacaoCreateValidator>();
         fv.RegisterValidatorsFromAssemblyContaining<TransacaoUpdateDTOValidator>();
+        fv.RegisterValidatorsFromAssemblyContaining<DeleteTransactionHandler>();
     });
 
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
@@ -106,6 +109,10 @@ builder.Services.AddScoped<IUrlHelper>(factory =>
 // Adicionar serviços necessários para logging
 builder.Services.AddLogging();
 
+// Adicionar serviços necessários para validação de comandos
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+// Adicionar serviços do MediatR
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(TransacoesController).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(CreateTransactionHandler).Assembly);
@@ -113,7 +120,17 @@ builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(UpdateTransactionHandler).Assembly);
 });
 
+// Configureção do Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console() // Logs no console
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day) // Logs em arquivo
+    .CreateLogger();
 
+
+builder.Host.UseSerilog();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
 
 
 var app = builder.Build();
@@ -134,7 +151,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker") |
 
 app.UseHttpsRedirection();
 
-
+app.UseSerilogRequestLogging();
 app.MapControllers();
 
 app.UseRouting();
