@@ -6,6 +6,7 @@ using Transactions_Api.Infrastructure.Repositories;
 using Transactions_Api.Shared.Exceptions;
 using Transactions_Api.Shared.Utils;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Transactions_Api.Tests.Services;
@@ -18,11 +19,14 @@ public class TransacaoServiceTests
     private readonly Mock<IMapper> _mockMapper = new Mock<IMapper>();
     private readonly Mock<ITxidGenerator> _mockTxidGenerator = new Mock<ITxidGenerator>();
     private readonly TransacaoService _service;
+    private readonly Mock<ILogger<TransacaoService>> _mockLogger = new Mock<ILogger<TransacaoService>>();
+
 
     public TransacaoServiceTests()
     {
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockTransacaoRepository = new Mock<ITransacaoRepository>();
+        
 
         // Set up the UnitOfWork to return the mock repository
         _mockUnitOfWork.Setup(uow => uow.TransacaoRepository)
@@ -39,7 +43,7 @@ public class TransacaoServiceTests
         });
         _mapper = mapperConfig.CreateMapper();
 
-        _service = new TransacaoService(_mockUnitOfWork.Object, _mapper, _mockTxidGenerator.Object);
+        _service = new TransacaoService(_mockUnitOfWork.Object, _mapper, _mockTxidGenerator.Object, _mockLogger.Object);
     }
 
     [Fact]
@@ -110,7 +114,7 @@ public class TransacaoServiceTests
         mockTxidGenerator.Setup(x => x.GerarTxid()).Returns(txidEsperado);
 
         // Instância do serviço com os mocks injetados
-        var service = new TransacaoService(_mockUnitOfWork.Object, _mapper, mockTxidGenerator.Object);
+        var service = new TransacaoService(_mockUnitOfWork.Object, _mapper, mockTxidGenerator.Object, _mockLogger.Object);
 
         // Act
         var result = await service.AddAsync(transacaoCreateDto);

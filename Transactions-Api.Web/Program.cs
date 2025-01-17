@@ -122,9 +122,10 @@ builder.Services.AddMediatR(cfg => {
 
 // Configureção do Serilog
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console() // Logs no console
-    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day) // Logs em arquivo
+    .WriteTo.Console()
+    .WriteTo.Http("http://localhost:3100/loki/api/v1/push", queueLimitBytes: null)
     .CreateLogger();
+
 
 
 builder.Host.UseSerilog();
