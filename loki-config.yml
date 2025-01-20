@@ -1,7 +1,12 @@
-﻿server:
+﻿auth_enabled: false
+
+server:
   http_listen_port: 3100
 
 ingester:
+  wal:
+    enabled: true
+    dir: /tmp/loki/wal
   lifecycler:
     ring:
       kvstore:
@@ -28,6 +33,12 @@ storage_config:
     cache_location: /tmp/loki/cache
   filesystem:
     directory: /tmp/loki/chunks
+
+compactor:
+  shared_store: filesystem
+  working_directory: /tmp/loki/compactor
+  retention_enabled: true
+  retention_delete_delay: 24h
 
 limits_config:
   enforce_metric_name: false

@@ -10,6 +10,8 @@ services:
     depends_on:
       - mysql-db
       - loki
+    volumes:
+      - /var/log/transactions:/var/log/transactions # Volume para os logs do transactions-api
 
   mysql-db:
     image: mysql:8.0
@@ -22,8 +24,9 @@ services:
       MYSQL_USER: transactions
       MYSQL_PASSWORD: transactions
     volumes:
+      - ./mysql-init-scripts:/docker-entrypoint-initdb.d  
       - mysql_data:/var/lib/mysql
-  
+
   redis:
     image: redis:latest
     container_name: redis
@@ -39,7 +42,7 @@ services:
       - "3100:3100"
     volumes:
       - ./loki-config.yml:/etc/loki/local-config.yml
-      - C:/Users/caver/OneDrive/Documentos/csharp/Transactions-Api/loki-data:/tmp/loki
+      - ./loki-data:/tmp/loki
     command: -config.file=/etc/loki/local-config.yml
 
   grafana:
@@ -50,10 +53,27 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana-provisioning:/etc/grafana/provisioning # Provisionamento automático de dashboards e datasources
+      - ./grafana-data:/var/lib/grafana # Persistir dados do Grafana
+    depends_on:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.8.2
+    container_name: promtail
+    ports:
+      - "9080:9080" # Porta Promtail HTTP
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro # Arquivo de configuração do Promtail
+      - /var/log/transactions:/var/log/transactions # Volume para os logs a serem coletados
+      - /tmp:/tmp # Para armazenar posições do Promtail
+    command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki
 
 volumes:
   mysql_data:
   redis_data:
-  loki-data:
+  loki_data:
+  grafana_data:

@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Pomelo.EntityFrameworkCore.MySql.Internal;
 using Serilog;
+using Serilog.Sinks.File;
 using Transactions_Api.Controllers;
 using Transactions_Api.Middleware;
 
@@ -126,12 +126,16 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Http("http://localhost:3100/loki/api/v1/push", queueLimitBytes: null)
     .CreateLogger();
 
-
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console() // Logs no console
+    .WriteTo.File("/var/log/transactions/transactions-api.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 builder.Host.UseSerilog();
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+
 
 
 var app = builder.Build();
