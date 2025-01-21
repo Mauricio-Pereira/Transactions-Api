@@ -1,6 +1,7 @@
 ﻿using Transactions_Api.Application.DTOs;
 using Transactions_Api.Application.Queries;
 using Transactions_Api.Application.Services;
+using Transactions_Api.Application.Services.Messaging;
 using Transactions_Api.Infrastructure.Infrastructure.Caching;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -13,15 +14,18 @@ public class GetTransacaoByTxidHandler
 {
     private readonly ITransacaoService _transacaoService;
     private readonly ICachingService _cachingService;
+    private readonly IMessagePublisher _messagePublisher;
     private readonly ILogger<GetTransacaoByTxidHandler> _logger;
 
     public GetTransacaoByTxidHandler(
         ITransacaoService transacaoService,
         ICachingService cachingService,
+        IMessagePublisher messagePublisher,
         ILogger<GetTransacaoByTxidHandler> logger)
     {
         _transacaoService = transacaoService;
         _cachingService = cachingService;
+        _messagePublisher = messagePublisher;
         _logger = logger;
     }
 
@@ -39,7 +43,6 @@ public class GetTransacaoByTxidHandler
 
             try
             {
-                // Tenta desserializar como TransacaoResourceDTO
                 var resourceCache = JsonConvert.DeserializeObject<TransacaoResourceDTO>(transacaoCache);
 
                 if (resourceCache?.Transacao == null)
@@ -48,7 +51,6 @@ public class GetTransacaoByTxidHandler
                         "Falha ao desserializar TransacaoResourceDTO para Txid {Txid}. Tentando desserializar como TransacaoResponseDTO",
                         request.Txid);
 
-                    // Então tenta como TransacaoResponseDTO
                     var fallback = JsonConvert.DeserializeObject<TransacaoResponseDTO>(transacaoCache);
                     if (fallback != null)
                     {
@@ -73,7 +75,7 @@ public class GetTransacaoByTxidHandler
         if (transacao == null)
         {
             _logger.LogWarning("Transação com Txid {Txid} não encontrada no banco de dados", request.Txid);
-            return null; // O controller tratará como NotFound
+            return null;
         }
 
         _logger.LogInformation("Transação com Txid {Txid} encontrada no banco de dados", request.Txid);
@@ -92,6 +94,23 @@ public class GetTransacaoByTxidHandler
             _logger.LogWarning(ex, "Falha ao armazenar transação com Txid {Txid} no cache", request.Txid);
         }
 
+        // 5) Publica mensagem no RabbitMQ
+        await PublishMessageAsync(resource);
+
         return resource;
+    }
+
+    private async Task PublishMessageAsync(TransacaoResourceDTO resource)
+    {
+        try
+        {
+            var message = JsonConvert.SerializeObject(resource.Transacao);
+            await _messagePublisher.PublishAsync("transactions_queue", message);
+            _logger.LogInformation("Mensagem publicada no RabbitMQ para Txid: {Txid}", resource.Transacao.Txid);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao publicar mensagem no RabbitMQ para Txid: {Txid}", resource.Transacao.Txid);
+        }
     }
 }

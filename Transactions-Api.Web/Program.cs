@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Sinks.File;
+using Transactions_Api.Application.Services.Messaging;
+using Transactions_API.BackgroundServices;
 using Transactions_Api.Controllers;
 using Transactions_Api.Middleware;
 
@@ -119,6 +121,13 @@ builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(DeleteTransactionHandler).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(UpdateTransactionHandler).Assembly);
 });
+
+// Adicionar serviços de mensageria
+builder.Services.AddSingleton<IMessagePublisher, RabbitMQPublisher>();
+builder.Services.AddSingleton<IMessageConsumer, RabbitMQConsumer>();
+builder.Services.AddHostedService<TransactionBackgroundService>();
+
+
 
 // Configureção do Serilog
 Log.Logger = new LoggerConfiguration()

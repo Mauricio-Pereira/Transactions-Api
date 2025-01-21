@@ -1,4 +1,6 @@
-﻿services:
+﻿version: '3.8'
+
+services:
   transactions-api:
     build:
       context: .
@@ -7,10 +9,19 @@
     ports:
       - "5000:80"
     depends_on:
-      - mysql-db
-      - loki
+      rabbitmq:
+        condition: service_healthy
+      mysql-db:
+        condition: service_started
+      loki:
+        condition: service_started
     volumes:
-      - /var/log/transactions:/var/log/transactions # Volume para os logs do transactions-api
+      - /var/log/transactions:/var/log/transactions
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
 
   mysql-db:
     image: mysql:8.0
@@ -23,7 +34,7 @@
       MYSQL_USER: transactions
       MYSQL_PASSWORD: transactions
     volumes:
-      - ./mysql-init-scripts:/docker-entrypoint-initdb.d  
+      - ./mysql-init-scripts:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
 
   redis:
@@ -33,6 +44,23 @@
       - "6380:6379"
     volumes:
       - redis_data:/data
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"      # AMQP
+      - "15672:15672"    # Web management
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
   loki:
     image: grafana/loki:2.8.2
@@ -53,8 +81,8 @@
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
-      - ./grafana-provisioning:/etc/grafana/provisioning # Provisionamento automático de dashboards e datasources
-      - ./grafana-data:/var/lib/grafana # Persistir dados do Grafana
+      - ./grafana-provisioning:/etc/grafana/provisioning
+      - ./grafana-data:/var/lib/grafana
     depends_on:
       - loki
 
@@ -62,11 +90,11 @@
     image: grafana/promtail:2.8.2
     container_name: promtail
     ports:
-      - "9080:9080" # Porta Promtail HTTP
+      - "9080:9080"
     volumes:
-      - ./promtail-config.yml:/etc/promtail/config.yml:ro # Arquivo de configuração do Promtail
-      - /var/log/transactions:/var/log/transactions # Volume para os logs a serem coletados
-      - /tmp:/tmp # Para armazenar posições do Promtail
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/log/transactions:/var/log/transactions
+      - /tmp:/tmp
     command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki
@@ -76,3 +104,4 @@ volumes:
   redis_data:
   loki_data:
   grafana_data:
+  rabbitmq_data:

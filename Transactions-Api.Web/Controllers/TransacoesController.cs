@@ -1,7 +1,6 @@
 ﻿using Transactions_Api.Application.Commands;
 using Transactions_Api.Application.DTOs;
 using Transactions_Api.Application.Queries;
-using Transactions_Api.Application.Services;
 using Transactions_Api.Shared.Exceptions;
 using Transactions_Api.Shared.Utils;
 using MediatR;
@@ -15,7 +14,6 @@ namespace Transactions_Api.Controllers;
 public class TransacoesController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly ITransacaoService _transacao;
 
 
     public TransacoesController(IMediator mediator)
