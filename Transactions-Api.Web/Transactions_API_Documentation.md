@@ -395,3 +395,5 @@ MIT License
 ## Autor
 
 - [Mauricio Vieira Pereira](https://github.com/Mauricio-Pereira)
+- [LinkedIn](https://www.linkedin.com/in/mauricio-vieira-pereira/)
+```
