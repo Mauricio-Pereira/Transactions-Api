@@ -33,7 +33,7 @@ jobs:
 
       # Rodar testes
       - name: Run Tests
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test Transactions-Api.Tests/Transactions-Api.Tests.csproj --verbosity normal
 
   docker:
     needs: build
