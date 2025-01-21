@@ -50,11 +50,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
+ 
       # Build da imagem Docker
       - name: Build Docker Image
-        run: docker build -t Transactions-api:latest .
-
+        run: docker build -t transactions-api:latest .
+      
       # Publicar a imagem no Docker Hub
       - name: Push Docker Image
-        run: docker tag Transactions-api:latest ${{ secrets.DOCKER_USERNAME }}/Transactions-api:latest && docker push ${{ secrets.DOCKER_USERNAME }}/Transactions-api:latest
+        run: |
+          docker tag transactions-api:latest ${{ secrets.DOCKER_USERNAME }}/transactions-api:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/transactions-api:latest
