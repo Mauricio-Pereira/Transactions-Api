@@ -1,14 +1,15 @@
+Aqui está a versão atualizada do seu README com base no estado atual do seu projeto:
+
+```markdown
 # Transactions API
 
-Transactions API é uma aplicação web construída com ASP.NET Core, projetada para gerenciar transações financeiras de maneira
-eficiente e segura. Ela oferece funcionalidades de criação, leitura, atualização e exclusão (CRUD) de transações, além
-de implementar autenticação baseada em API Key para proteger endpoints sensíveis.
+Transactions API é uma aplicação web construída com ASP.NET Core, projetada para gerenciar transações financeiras de maneira eficiente e segura. Ela oferece funcionalidades de criação, leitura, atualização e exclusão (CRUD) de transações, além de implementar autenticação baseada em API Key para proteger endpoints sensíveis.
 
 ## 📋 Índice
 
 1. [Visão Geral](#visão-geral)
 2. [Funcionalidades](#funcionalidades)
-3. [Dependências](#tecnologias-utilizadas)
+3. [Dependências](#dependências)
 4. [Arquitetura do Projeto](#arquitetura-do-projeto)
 5. [Configuração e Instalação](#configuração-e-instalação)
 6. [Uso da API](#uso-da-api)
@@ -23,9 +24,7 @@ de implementar autenticação baseada em API Key para proteger endpoints sensív
 
 ## Visão Geral
 
-Transactions API é uma aplicação robusta para gerenciamento de transações financeiras, permitindo aos usuários realizar
-operações de forma segura e eficiente. Com uma arquitetura bem definida e práticas de desenvolvimento modernas, a API
-garante alta performance, segurança e facilidade de manutenção.
+Transactions API é uma aplicação robusta para gerenciamento de transações financeiras, permitindo aos usuários realizar operações de forma segura e eficiente. Com uma arquitetura bem definida e práticas de desenvolvimento modernas, a API garante alta performance, segurança e facilidade de manutenção.
 
 ## Funcionalidades
 
@@ -38,8 +37,7 @@ garante alta performance, segurança e facilidade de manutenção.
 
 ## Dependências
 
-Este projeto utiliza várias bibliotecas e pacotes para implementar funcionalidades específicas e realizar testes. Abaixo
-está a lista de dependências e suas respectivas versões:
+Este projeto utiliza várias bibliotecas e pacotes para implementar funcionalidades específicas e realizar testes. Abaixo está a lista de dependências e suas respectivas versões:
 
 ### Dependências do Projeto Principal (Transactions_API)
 
@@ -71,8 +69,7 @@ está a lista de dependências e suas respectivas versões:
 | `xunit`                                   | 2.5.3   | Framework de testes para execução e organização dos testes.                |
 | `xunit.runner.visualstudio`               | 2.5.3   | Ferramentas de execução de testes no Visual Studio.                        |
 
-Essas dependências garantem a funcionalidade completa do projeto Transactions API, desde o mapeamento de objetos e validação
-de dados até testes automatizados e documentação com Swagger.
+Essas dependências garantem a funcionalidade completa do projeto Transactions API, desde o mapeamento de objetos e validação de dados até testes automatizados e documentação com Swagger.
 
 ## Arquitetura do Projeto
 
@@ -101,8 +98,7 @@ A aplicação segue uma arquitetura limpa, separando responsabilidades em difere
    ```
 
 2. **Configurar Variáveis de Ambiente**:
-   Crie um arquivo `.env` na raiz do projeto (se aplicável) e defina as variáveis necessárias, como chaves de API e
-   strings de conexão.
+   Crie um arquivo `.env` na raiz do projeto (se aplicável) e defina as variáveis necessárias, como chaves de API e strings de conexão.
 
 3. **Restaurar Dependências**:
    ```bash
@@ -110,8 +106,7 @@ A aplicação segue uma arquitetura limpa, separando responsabilidades em difere
    ```
 
 4. **Aplicar Migrations e Configurar o Banco de Dados**:
-   Caso esteja utilizando um banco de dados real, configure a string de conexão no `appsettings.json` e execute as
-   migrations:
+   Caso esteja utilizando um banco de dados real, configure a string de conexão no `appsettings.json` e execute as migrations:
    ```bash
    dotnet ef database update
    ```
@@ -126,8 +121,7 @@ A aplicação segue uma arquitetura limpa, separando responsabilidades em difere
 
 ### Autenticação
 
-A API utiliza autenticação baseada em API Key para proteger endpoints sensíveis. A chave de API deve ser fornecida no
-cabeçalho da requisição HTTP com o nome `X-API-KEY`.
+A API utiliza autenticação baseada em API Key para proteger endpoints sensíveis. A chave de API deve ser fornecida no cabeçalho da requisição HTTP com o nome `X-API-KEY`.
 
 **Exemplo de Cabeçalho**:
 
@@ -151,10 +145,10 @@ X-API-KEY: sua_chave_api_aqui
 | `/api/Transacoes/{txid}` | DELETE | Requer API Key | Deleta uma transação existente.               | 200 OK - Detalhes da transação deletada                                                                   | 404 Not Found - `{"message": "Transação não encontrada"}`                        |  
 
 1. **Obter Todas as Transações**
-    - **URL**: `/api/Transacoes`
-    - **Método**: GET
-    - **Autenticação**: Requer API Key
-    - **Descrição**: Retorna uma lista das transações existentes.
+   - **URL**: `/api/Transacoes`
+   - **Método**: GET
+   - **Autenticação**: Requer API Key
+   - **Descrição**: Retorna uma lista das transações existentes.
 
    **Exemplo de Resposta**: 200 OK
    ```json
@@ -195,15 +189,15 @@ X-API-KEY: sua_chave_api_aqui
       }
    ]
    ```
-    - **Resposta de Erro**: 404 Not Found - `{"message": "Nenhuma transação encontrada"}`
-
+   - **Resposta de Erro**: 404 Not Found - `{"message": "Nenhuma transação encontrada"}`
 
 2. **Obter Transação por Txid**
-    - **URL**: `/api/Transacoes/{txid}`
-    - **Método**: GET
-    - **Autenticação**: Requer API Key
-    - **Descrição**: Retorna os detalhes de uma transação específica.
+   - **URL**: `/api/Transacoes/{txid}`
+   - **Método**: GET
+   - **Autenticação**: Requer API Key
+   - **Descrição**: Retorna os detalhes de uma transação específica.
 
+   **Exemplo de Resposta**: 200 OK
    ```json
    {
       "id": 1,
@@ -223,15 +217,15 @@ X-API-KEY: sua_chave_api_aqui
       "dataTransacao": "2024-11-05T18:53:07.101Z"
    }
    ```
-    - **Resposta de Erro**: 404 Not Found - `{"message": "Transação não encontrada"}`
+   - **Resposta de Erro**: 404 Not Found - `{"message": "Transação não encontrada"}`
 
-3. **Obter Trancações Paginadas**
-    - **URL**: `/api/Transacoes/paged`
-    - **Método**: GET
-    - **Autenticação**: Requer API Key
-    - **Descrição**: Retorna uma lista paginada de transações.
+3. **Obter Transações Paginadas**
+   - **URL**: `/api/Transacoes/paged`
+   - **Método**: GET
+   - **Autenticação**: Requer API Key
+   - **Descrição**: Retorna uma lista paginada de transações.
 
-    **Exemplo de Requisição**:
+   **Exemplo de Requisição**:
      ```json
      {
         "pageNumber": 1,
@@ -278,15 +272,13 @@ X-API-KEY: sua_chave_api_aqui
       }
    ]
    ```
-    - **Resposta de Erro**: 404 Not Found - `{"message": "Nenhuma transação encontrada"}`
+   - **Resposta de Erro**: 404 Not Found - `{"message": "Nenhuma transação encontrada"}`
 
-
-3. **Criar Transação**
-
-    - **URL**: `/api/Transacoes`
-    - **Método**: POST
-    - **Autenticação**: Requer API Key
-    - **Descrição**: Cria uma nova transação com o valor fornecido.
+4. **Criar Transação**
+   - **URL**: `/api/Transacoes`
+   - **Método**: POST
+   - **Autenticação**: Requer API Key
+   - **Descrição**: Cria uma nova transação com o valor fornecido.
 
    **Exemplo de Requisição**:
     ```json
@@ -294,7 +286,7 @@ X-API-KEY: sua_chave_api_aqui
       "valor": 100.00
     }
     ```
-   **Exemplo de Resposta**:
+   **Exemplo de Resposta**: 201 Created
    ```json
    {
       "id": 1,
@@ -303,21 +295,18 @@ X-API-KEY: sua_chave_api_aqui
       "dataTransacao": "2024-11-05T18:53:07.101Z"
    }
    ```
-    - **Resposta de Erro**: 400 Bad Request - `{"message": "O objeto TransacaoCreateDTO não pode ser nulo."}`
-    - **Resposta de Erro**: 400 Bad Request - `{"message": "O valor da transação deve ser maior que zero."}`
-    - **Resposta de Erro**: 500 Internal Server Error - `{"message": "Erro ao criar a transação"}`
+   - **Resposta de Erro**: 400 Bad Request - `{"message": "O valor da transação deve ser maior que zero."}`
+   - **Resposta de Erro**: 500 Internal Server Error - `{"message": "Erro ao criar a transação"}`
 
-
-4. **Atualizar Transação**
-    - **URL**: `/api/Transacoes/{txid}`
-    - **Método**: PUT
-    - **Autenticação**: Requer API Key
-    - **Descrição**: Atualiza os detalhes de uma transação existente.
+5. **Atualizar Transação**
+   - **URL**: `/api/Transacoes/{txid}`
+   - **Método**: PUT
+   - **Autenticação**: Requer API Key
+   - **Descrição**: Atualiza os detalhes de uma transação existente.
 
    **Exemplo de Requisição**:
     ```json
    {
-      "txid": TROQUE AQUI PELO ID DA TRANSAÇÃO,  
       "pagadorNome": "João da Silva",  
       "pagadorCpf": "39053344705",  
       "pagadorBanco": "001",  
@@ -328,10 +317,10 @@ X-API-KEY: sua_chave_api_aqui
       "recebedorBanco": "237",  
       "recebedorAgencia": "5678",  
       "recebedorConta": "7654321"  
-       }
+   }
     ```
-    - **Resposta de Sucesso**: 200 OK - `{"message": "Transação atualizada com sucesso"}`
-    ``` json
+   - **Resposta de Sucesso**: 200 OK - `{"message": "Transação atualizada com sucesso"}`
+    ```json
    {
       "id": 7,
       "txid": "T45756448202411051908MoHCZGm26Eq",
@@ -349,15 +338,12 @@ X-API-KEY: sua_chave_api_aqui
       "valor": 800,
       "dataTransacao": "2024-11-05T19:08:51.034742"
    }
-   
     ```
-    - **Resposta de Erro**: 404 Not Found - `{"message": "Transação não encontrada"}`
-    - **Resposta de Erro**: 400 Bad Request - `{"message": "(mensagem de erro baseada na validação)"}`
-    - **Resposta de Erro**: 500 Internal Server Error - `{"message": "Erro ao atualizar a transação"}`
+   - **Resposta de Erro**: 404 Not Found - `{"message": "Transação não encontrada"}`
+   - **Resposta de Erro**: 400 Bad Request - `{"message": "(mensagem de erro baseada na validação)"}`
+   - **Resposta de Erro**: 500 Internal Server Error - `{"message": "Erro ao atualizar a transação"}`
 
-
-5. **Deletar Transação**
-
+6. **Deletar Transação**
     - **URL**: `/api/Transacoes/{txid}`
     - **Método**: DELETE
     - **Autenticação**: Requer API Key
@@ -365,45 +351,42 @@ X-API-KEY: sua_chave_api_aqui
     - **Resposta de Sucesso**: 200 OK
     ```json
     {
-   "id": 7,
-   "txid": "T45756448202411051908MoHCZGm26Eq",
-   "e2eId": "E45756448202411051910IGIlXzooAkG",
-   "pagadorNome": "João da Silva",
-   "pagadorCpf": "39053344705",
-   "pagadorBanco": "001",
-   "pagadorAgencia": "1234",
-   "pagadorConta": "1234567",
-   "recebedorNome": "Maria Oliveira",
-   "recebedorCpf": "84983149022",
-   "recebedorBanco": "237",
-   "recebedorAgencia": "5678",
-   "recebedorConta": "7654321",
-   "valor": 800,
-   "dataTransacao": "2024-11-05T19:08:51.034742"
+      "id": 7,
+      "txid": "T45756448202411051908MoHCZGm26Eq",
+      "e2eId": "E45756448202411051910IGIlXzooAkG",
+      "pagadorNome": "João da Silva",
+      "pagadorCpf": "39053344705",
+      "pagadorBanco": "001",
+      "pagadorAgencia": "1234",
+      "pagadorConta": "1234567",
+      "recebedorNome": "Maria Oliveira",
+      "recebedorCpf": "84983149022",
+      "recebedorBanco": "237",
+      "recebedorAgencia": "5678",
+      "recebedorConta": "7654321",
+      "valor": 800,
+      "dataTransacao": "2024-11-05T19:08:51.034742"
    }
     ```
     - **Resposta de Erro**: 404 Not Found - `{"message": "Transação não encontrada"}`
     - **Resposta de Erro**: 500 Internal Server Error - `{"message": "Erro ao deletar a transação"}`
-
 ## Validação
 
 A aplicação utiliza FluentValidation para garantir a integridade dos dados nas requisições.
-As validações são aplicadas nos Data Transfer Objects (DTOs) antes de serem processados e retornam mensagens de erro
-claras em caso de falha.
+As validações são aplicadas nos Data Transfer Objects (DTOs) antes de serem processados e retornam mensagens de erro claras em caso de falha.
 Além disso, as classes de validação dentro do diretório `Validators` são reutilizáveis e fáceis de manter.
 
 ## Tratamento de Erros
 
 Middleware personalizado trata exceções e fornece respostas claras.
-O middleware de tratamento de erros captura exceções não tratadas e retorna uma resposta JSON com o status de erro
-apropriado e uma mensagem descritiva.
+O middleware de tratamento de erros captura exceções não tratadas e retorna uma resposta JSON com o status de erro apropriado e uma mensagem descritiva.
 Além disso, as exceções são registradas no console para fins de depuração e monitoramento.
 
 ## Testes
 
 Foi feita uma aplicação de testes unitários e de integração para garantir a qualidade do código.
-Os testes de unidade cobrem a lógica de negócio e a validação de dados, enquanto os testes de integração verificam a
-integridade dos endpoints da API.
+Os testes de unidade cobrem a lógica de negócio e a validação de dados, enquanto os testes de integração verificam a integridade dos endpoints da API.
+Os testes são implementados utilizando XUnit, Moq e FluentAssertions.
 
 ## Licença
 
